@@ -1,4 +1,4 @@
-# Traccar Positions & Routes API
+# Traccar Positions & Routes node-API
 
 Express.js backend server for managing custom positions and routes in Traccar Web with PostgreSQL integration.
 
@@ -44,38 +44,38 @@ npm start
 
 The server will start on `http://localhost:5000` and automatically create the required database tables.
 
-## API Endpoints
+## node-API Endpoints
 
 ### Positions
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/api/custom-positions` | Get all positions |
-| GET | `/api/custom-positions/:id` | Get position by ID |
-| GET | `/api/custom-positions/device/:deviceId` | Get positions by device |
-| GET | `/api/custom-positions/range?deviceId=X&fromDate=Y&toDate=Z` | Get positions in date range |
-| POST | `/api/custom-positions` | Create new position |
-| PUT | `/api/custom-positions/:id` | Update position |
-| DELETE | `/api/custom-positions/:id` | Delete position |
+| GET | `/node-api/custom-positions` | Get all positions |
+| GET | `/node-api/custom-positions/:id` | Get position by ID |
+| GET | `/node-api/custom-positions/device/:deviceId` | Get positions by device |
+| GET | `/node-api/custom-positions/range?deviceId=X&fromDate=Y&toDate=Z` | Get positions in date range |
+| POST | `/node-api/custom-positions` | Create new position |
+| PUT | `/node-api/custom-positions/:id` | Update position |
+| DELETE | `/node-api/custom-positions/:id` | Delete position |
 
 ### Routes
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/api/custom-routes` | Get all routes |
-| GET | `/api/custom-routes/:id` | Get route by ID |
-| GET | `/api/custom-routes/device/:deviceId` | Get routes by device |
-| POST | `/api/custom-routes` | Create new route |
-| PUT | `/api/custom-routes/:id` | Update route |
-| POST | `/api/custom-routes/:id/positions` | Add position to route |
-| DELETE | `/api/custom-routes/:id/positions` | Remove position from route |
-| DELETE | `/api/custom-routes/:id` | Delete route |
+| GET | `/node-api/custom-routes` | Get all routes |
+| GET | `/node-api/custom-routes/:id` | Get route by ID |
+| GET | `/node-api/custom-routes/device/:deviceId` | Get routes by device |
+| POST | `/node-api/custom-routes` | Create new route |
+| PUT | `/node-api/custom-routes/:id` | Update route |
+| POST | `/node-api/custom-routes/:id/positions` | Add position to route |
+| DELETE | `/node-api/custom-routes/:id/positions` | Remove position from route |
+| DELETE | `/node-api/custom-routes/:id` | Delete route |
 
 ## Example Requests
 
 ### Create Position
 ```bash
-curl -X POST http://localhost:5000/api/custom-positions \
+curl -X POST http://localhost:5000/node-api/custom-positions \
   -H "Content-Type: application/json" \
   -d '{
     "deviceId": 1,
@@ -89,7 +89,7 @@ curl -X POST http://localhost:5000/api/custom-positions \
 
 ### Create Route
 ```bash
-curl -X POST http://localhost:5000/api/custom-routes \
+curl -X POST http://localhost:5000/node-api/custom-routes \
   -H "Content-Type: application/json" \
   -d '{
     "deviceId": 1,
@@ -105,7 +105,7 @@ curl -X POST http://localhost:5000/api/custom-routes \
 
 ### Update Position
 ```bash
-curl -X PUT http://localhost:5000/api/custom-positions/1 \
+curl -X PUT http://localhost:5000/node-api/custom-positions/1 \
   -H "Content-Type: application/json" \
   -d '{
     "latitude": 13.3335,
