@@ -21,11 +21,13 @@ const positionRoutes = require('./routes/positions');
 const routeRoutes = require('./routes/routes');
 const deviceRoutes = require('./routes/devices');
 const geofenceRoutes = require('./routes/geofences');
+const tripRoutes = require('./routes/trips');
 
 app.use('/node-api/custom-positions', positionRoutes);
 app.use('/node-api/custom-routes', routeRoutes);
 app.use('/node-api/devices', deviceRoutes);
 app.use('/node-api/geofences', geofenceRoutes);
+app.use('/node-api/trips', tripRoutes);
 
 // Health check endpoint
 app.get('/node-api/health', (req, res) => {

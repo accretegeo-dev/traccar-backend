@@ -41,6 +41,15 @@ const initializeDatabase = async () => {
       CREATE INDEX IF NOT EXISTS idx_devices_name ON devices(name);
       CREATE INDEX IF NOT EXISTS idx_positions_device_id ON custom_positions(device_id);
       CREATE INDEX IF NOT EXISTS idx_routes_device_id ON custom_routes(device_id);
+
+      CREATE TABLE IF NOT EXISTS trip_overrides (
+        start_position_id BIGINT PRIMARY KEY,
+        device_id INTEGER NOT NULL REFERENCES devices(id),
+        edited JSONB NOT NULL DEFAULT '{}'::jsonb,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+      CREATE INDEX IF NOT EXISTS idx_trip_overrides_device_id ON trip_overrides(device_id);
     `);
     console.log('Database initialized successfully');
   } catch (err) {
