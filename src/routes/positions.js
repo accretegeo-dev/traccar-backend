@@ -6,6 +6,9 @@ const positionController = require('../controllers/positionController');
 router.get('/', positionController.getAllPositions);
 router.get('/csv', positionController.getPositionsCsv);
 
+// Copy positions from one day to another
+router.post('/copy', positionController.copyPositionsToDate);
+
 // Get position by ID
 router.get('/:id(\\d+)', positionController.getPositionById);
 

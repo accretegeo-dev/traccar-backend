@@ -378,6 +378,88 @@ exports.getPositionsByDateRange = async (req, res) => {
   }
 };
 
+// Copy positions from source date to target date for a specific device
+exports.copyPositionsToDate = async (req, res) => {
+  const { deviceId, sourceDate, targetDate } = req.body;
+
+  // Validation
+  if (!deviceId || !sourceDate || !targetDate) {
+    return res.status(400).json({
+      error: 'Missing required fields: deviceId, sourceDate, targetDate',
+    });
+  }
+
+  try {
+    // Parse dates to get start and end of day
+    const sourceStart = new Date(sourceDate);
+    sourceStart.setHours(0, 0, 0, 0);
+    const sourceEnd = new Date(sourceDate);
+    sourceEnd.setHours(23, 59, 59, 999);
+
+    const targetStart = new Date(targetDate);
+    targetStart.setHours(0, 0, 0, 0);
+
+    // Calculate time offset in milliseconds
+    const timeOffset = targetStart - sourceStart;
+
+    // Fetch all positions for the source date
+    const sourcePositions = await db.query(
+      `SELECT * FROM public.tc_positions 
+       WHERE deviceid = $1 AND fixtime >= $2 AND fixtime <= $3
+       ORDER BY fixtime ASC`,
+      [deviceId, sourceStart, sourceEnd]
+    );
+
+    if (sourcePositions.rows.length === 0) {
+      return res.status(404).json({ error: 'No positions found for the source date' });
+    }
+
+    // Insert copied positions with adjusted dates
+    const insertedPositions = [];
+    for (const pos of sourcePositions.rows) {
+      const newFixTime = new Date(new Date(pos.fixtime).getTime() + timeOffset);
+      const newDeviceTime = new Date(new Date(pos.devicetime).getTime() + timeOffset);
+      const newServerTime = new Date(new Date(pos.servertime).getTime() + timeOffset);
+
+      const result = await db.query(
+        `INSERT INTO public.tc_positions (
+           protocol, deviceid, servertime, devicetime, fixtime, valid,
+           latitude, longitude, altitude, speed, course, address, attributes, accuracy, network
+         )
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+         RETURNING id, deviceid AS "deviceId", latitude, longitude, speed, address, fixtime AS "fixTime"`,
+        [
+          pos.protocol,
+          pos.deviceid,
+          newServerTime,
+          newDeviceTime,
+          newFixTime,
+          pos.valid,
+          pos.latitude,
+          pos.longitude,
+          pos.altitude,
+          pos.speed,
+          pos.course,
+          pos.address,
+          pos.attributes,
+          pos.accuracy,
+          pos.network,
+        ]
+      );
+      insertedPositions.push(result.rows[0]);
+    }
+
+    res.status(201).json({
+      message: `Successfully copied ${insertedPositions.length} positions`,
+      count: insertedPositions.length,
+      positions: insertedPositions,
+    });
+  } catch (err) {
+    console.error('Error copying positions:', err);
+    res.status(500).json({ error: 'Failed to copy positions' });
+  }
+};
+
 // Export positions as CSV
 exports.getPositionsCsv = async (req, res) => {
   try {
